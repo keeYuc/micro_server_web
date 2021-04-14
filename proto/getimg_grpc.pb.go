@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GetimgClient interface {
 	Call(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
+	Test(ctx context.Context, in *MTest, opts ...grpc.CallOption) (*MTest, error)
 }
 
 type getimgClient struct {
@@ -38,11 +39,21 @@ func (c *getimgClient) Call(ctx context.Context, in *Message, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *getimgClient) Test(ctx context.Context, in *MTest, opts ...grpc.CallOption) (*MTest, error) {
+	out := new(MTest)
+	err := c.cc.Invoke(ctx, "/getimg.Getimg/Test", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GetimgServer is the server API for Getimg service.
 // All implementations must embed UnimplementedGetimgServer
 // for forward compatibility
 type GetimgServer interface {
 	Call(context.Context, *Message) (*Message, error)
+	Test(context.Context, *MTest) (*MTest, error)
 	mustEmbedUnimplementedGetimgServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedGetimgServer struct {
 
 func (UnimplementedGetimgServer) Call(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Call not implemented")
+}
+func (UnimplementedGetimgServer) Test(context.Context, *MTest) (*MTest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
 }
 func (UnimplementedGetimgServer) mustEmbedUnimplementedGetimgServer() {}
 
@@ -84,6 +98,24 @@ func _Getimg_Call_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Getimg_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MTest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GetimgServer).Test(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/getimg.Getimg/Test",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GetimgServer).Test(ctx, req.(*MTest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Getimg_ServiceDesc is the grpc.ServiceDesc for Getimg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -94,6 +126,10 @@ var Getimg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Call",
 			Handler:    _Getimg_Call_Handler,
+		},
+		{
+			MethodName: "Test",
+			Handler:    _Getimg_Test_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

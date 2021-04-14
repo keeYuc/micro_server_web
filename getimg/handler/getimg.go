@@ -11,10 +11,15 @@ import (
 	"github.com/afocus/captcha"
 )
 
-type Getimg struct{
+type Getimg struct {
 	message.UnimplementedGetimgServer
 }
 
+func (e *Getimg) Test(ctx context.Context, in *message.MTest) (*message.MTest, error) {
+	fmt.Println("来了test一个连接")
+	fmt.Println("test 成功了")
+	return in, nil
+}
 
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Getimg) Call(ctx context.Context, in *message.Message) (*message.Message, error) {
@@ -59,7 +64,6 @@ func get_img(uuid string) (*captcha.Image, string) {
 	cap.SetFrontColor(color.RGBA{255, 255, 255, 255})
 	// 设置背景色 可以多个 随机替换背景色 默认白色
 	cap.SetBkgColor(color.RGBA{255, 0, 0, 255}, color.RGBA{0, 0, 255, 255}, color.RGBA{0, 153, 0, 255})
-
 	// _, str := cap.Create(4, captcha.NUM)
 	img, str := cap.Create(4, captcha.ALL)
 	return img, str

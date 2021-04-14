@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"ihome/controller"
-	"ihome/model"
 	"ihome/utils"
+	_ "keeyu/tool"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -43,7 +43,6 @@ func initSession() redis.Store {
 }
 
 func main() {
-	model.InitRedis()
 	router := gin.Default()
 	store := initSession()
 	router.Use(sessions.Sessions("websession", store))

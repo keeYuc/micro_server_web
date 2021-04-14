@@ -23,7 +23,7 @@ func GetImg(ctx *gin.Context) {
 	if uuid == "" {
 		fmt.Println("uuid获取错误")
 	}
-	conn, err := grpc.Dial("127.0.0.1:8787")
+	conn, err := grpc.Dial("127.0.0.1:8787", grpc.WithInsecure())
 	if err != nil {
 		fmt.Println("没连上微服务")
 		return

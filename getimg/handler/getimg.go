@@ -4,11 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"image/color"
-
-	"keeyu/message"
-
 	"github.com/afocus/captcha"
+	"image/color"
+	"keeyu/message"
+	"keeyu/tool"
 )
 
 type Getimg struct {
@@ -39,17 +38,14 @@ func (e *Getimg) Call(ctx context.Context, in *message.Message) (*message.Messag
 }
 
 func saveimg(uuid, str string) {
-
-	// conn, err := model.GlobalRedis.Dial()
-	// if err != nil {
-	// 	fmt.Println("redis 连接错误", err)
-	// }
-	// img, str := get_save_img(uuid)
-	// _, err = conn.Do("setex", uuid, 60*5, str)
-	// if err != nil {
-	// 	fmt.Println("redis 储存", err)
-	// }
-	// png.Encode(ctx.Writer, img)
+	conn, err := tool.GlobalRedis.Dial()
+	if err != nil {
+		fmt.Println("redis 连接错误", err)
+	}
+	_, err = conn.Do("setex", uuid, 60*5, str)
+	if err != nil {
+		fmt.Println("redis 储存", err)
+	}
 }
 
 func get_img(uuid string) (*captcha.Image, string) {

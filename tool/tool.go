@@ -18,7 +18,7 @@ const MysqlDB = "fuckhome"
 const RedisAddr = "127.0.0.1:6379"
 
 //接口部分
-func InitRedis() {
+func init() {
 	GlobalRedis = redis.Pool{
 		MaxIdle:     20,
 		MaxActive:   50,

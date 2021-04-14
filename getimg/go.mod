@@ -8,6 +8,7 @@ require (
 	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb // indirect
 	google.golang.org/grpc v1.37.0
 	keeyu/message v0.0.1
+	keeyu/tool v0.0.0-00010101000000-000000000000
 )
 
 replace (

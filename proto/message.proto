@@ -1,12 +1,23 @@
 syntax = "proto3";
 
-package getimg;
+package message;
 
 option go_package = "/;message";
 
 service Getimg {
 	rpc Call(Message) returns (Message) {}
 	rpc Test(M_test) returns(M_test){}
+}
+
+service NewUsr{
+	rpc NewUsr(Usr) returns (Usr){}
+}
+
+message Usr{
+	string Mobile   = 1;
+	string PassWord = 2;
+	string SmsCode  = 3;
+	bool     status = 4; //传出参数
 }
 
 message Message{

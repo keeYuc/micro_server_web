@@ -16,28 +16,53 @@ import (
 	"google.golang.org/grpc"
 )
 
-func GetImg(ctx *gin.Context) {
+//注册方法
+type RegUsr struct {
+	Mobile   string `json:"mobile"`
+	PassWord string `json:"password"`
+	SmsCode  string `json:"sms_code"`
+}
 
-	// ctx.JSON(utils.RECODE_OK,"ssss")
-	// png.Encode()
-	uuid := ctx.Param("uuid")
-	if uuid == "" {
-		fmt.Println("uuid获取错误")
-	}
+func get_grpc_addr_by_name(name string) (string, error) {
 	client_consul, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
-		fmt.Println("没连上consul服务")
-		return
+		return "", err
 	}
 	_, list, err := client_consul.Agent().AgentHealthServiceByName("getimg_")
 	if err != nil {
 		fmt.Println("没拿到getimg_")
-		return
+		return "", err
 	}
 	addr := fmt.Sprintf("%s:%d", list[0].Service.Address, list[0].Service.Port)
+	return addr, nil
+}
+
+func PostUser(ctx *gin.Context) {
+	var reg RegUsr
+	err := ctx.Bind(&reg)
+	//校验数据
+	if err != nil {
+		fmt.Println("获取前段传递数据失败")
+		return
+	}
+
+	// ctx.JSON(http.StatusOK)
+}
+
+func GetImg(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	if uuid == "" {
+		fmt.Println("uuid获取错误")
+		return
+	}
+	addr, err := get_grpc_addr_by_name("getimg_")
+	if err != nil {
+		fmt.Println("没拿到微服务", err)
+		return
+	}
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {
-		fmt.Println("没连上微服务")
+		fmt.Println("没连上微服务", err)
 		return
 	}
 	defer conn.Close()
@@ -46,29 +71,12 @@ func GetImg(ctx *gin.Context) {
 		Uuid: uuid,
 	})
 	if err != nil {
-		fmt.Println("获取失败")
+		fmt.Println("获取失败", err)
 		return
 	}
 	img := new(captcha.Image)
 	json.Unmarshal(out.Data, img)
 	png.Encode(ctx.Writer, img)
-
-	// conn, err := model.GlobalRedis.Dial()
-	// if err != nil {
-	// 	fmt.Println("redis 连接错误", err)
-	// }
-	// img, str := get_save_img(uuid)
-	// _, err = conn.Do("setex", uuid, 60*5, str)
-	// if err != nil {
-	// 	fmt.Println("redis 储存", err)
-	// }
-	// resp := make(map[string]interface{})
-	// resp["errno"] = utils.RECODE_OK
-	// resp["errmsg"] = utils.RecodeText(utils.RECODE_OK)
-	// temp := make(map[string]interface{})
-	// temp["data"] = resp
-	// ctx.JSON(http.StatusOK, resp)
-
 }
 
 func GetSession(ctx *gin.Context) {

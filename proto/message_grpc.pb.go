@@ -32,7 +32,7 @@ func NewGetimgClient(cc grpc.ClientConnInterface) GetimgClient {
 
 func (c *getimgClient) Call(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error) {
 	out := new(Message)
-	err := c.cc.Invoke(ctx, "/getimg.Getimg/Call", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/message.Getimg/Call", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *getimgClient) Call(ctx context.Context, in *Message, opts ...grpc.CallO
 
 func (c *getimgClient) Test(ctx context.Context, in *MTest, opts ...grpc.CallOption) (*MTest, error) {
 	out := new(MTest)
-	err := c.cc.Invoke(ctx, "/getimg.Getimg/Test", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/message.Getimg/Test", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func _Getimg_Call_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/getimg.Getimg/Call",
+		FullMethod: "/message.Getimg/Call",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetimgServer).Call(ctx, req.(*Message))
@@ -108,7 +108,7 @@ func _Getimg_Test_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/getimg.Getimg/Test",
+		FullMethod: "/message.Getimg/Test",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetimgServer).Test(ctx, req.(*MTest))
@@ -120,7 +120,7 @@ func _Getimg_Test_Handler(srv interface{}, ctx context.Context, dec func(interfa
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Getimg_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "getimg.Getimg",
+	ServiceName: "message.Getimg",
 	HandlerType: (*GetimgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -133,5 +133,91 @@ var Getimg_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "getimg.proto",
+	Metadata: "message.proto",
+}
+
+// NewUsrClient is the client API for NewUsr service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type NewUsrClient interface {
+	NewUsr(ctx context.Context, in *Usr, opts ...grpc.CallOption) (*Usr, error)
+}
+
+type newUsrClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewNewUsrClient(cc grpc.ClientConnInterface) NewUsrClient {
+	return &newUsrClient{cc}
+}
+
+func (c *newUsrClient) NewUsr(ctx context.Context, in *Usr, opts ...grpc.CallOption) (*Usr, error) {
+	out := new(Usr)
+	err := c.cc.Invoke(ctx, "/message.NewUsr/NewUsr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// NewUsrServer is the server API for NewUsr service.
+// All implementations must embed UnimplementedNewUsrServer
+// for forward compatibility
+type NewUsrServer interface {
+	NewUsr(context.Context, *Usr) (*Usr, error)
+	mustEmbedUnimplementedNewUsrServer()
+}
+
+// UnimplementedNewUsrServer must be embedded to have forward compatible implementations.
+type UnimplementedNewUsrServer struct {
+}
+
+func (UnimplementedNewUsrServer) NewUsr(context.Context, *Usr) (*Usr, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewUsr not implemented")
+}
+func (UnimplementedNewUsrServer) mustEmbedUnimplementedNewUsrServer() {}
+
+// UnsafeNewUsrServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NewUsrServer will
+// result in compilation errors.
+type UnsafeNewUsrServer interface {
+	mustEmbedUnimplementedNewUsrServer()
+}
+
+func RegisterNewUsrServer(s grpc.ServiceRegistrar, srv NewUsrServer) {
+	s.RegisterService(&NewUsr_ServiceDesc, srv)
+}
+
+func _NewUsr_NewUsr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Usr)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NewUsrServer).NewUsr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/message.NewUsr/NewUsr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NewUsrServer).NewUsr(ctx, req.(*Usr))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// NewUsr_ServiceDesc is the grpc.ServiceDesc for NewUsr service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var NewUsr_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "message.NewUsr",
+	HandlerType: (*NewUsrServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "NewUsr",
+			Handler:    _NewUsr_NewUsr_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "message.proto",
 }

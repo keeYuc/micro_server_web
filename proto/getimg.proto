@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package getimg;
+
+option go_package = "/;message";
+
+service Getimg {
+	rpc Call(Message) returns (Message) {}
+}
+
+message Message{
+	string uuid = 1; //传入
+	bytes  data = 2; //传出
+}

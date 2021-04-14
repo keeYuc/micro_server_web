@@ -12,6 +12,7 @@ import (
 	"github.com/afocus/captcha"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/consul/api"
 	"google.golang.org/grpc"
 )
 
@@ -23,7 +24,18 @@ func GetImg(ctx *gin.Context) {
 	if uuid == "" {
 		fmt.Println("uuid获取错误")
 	}
-	conn, err := grpc.Dial("127.0.0.1:8787", grpc.WithInsecure())
+	client_consul, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		fmt.Println("没连上consul服务")
+		return
+	}
+	_, list, err := client_consul.Agent().AgentHealthServiceByName("getimg_")
+	if err != nil {
+		fmt.Println("没拿到getimg_")
+		return
+	}
+	addr := fmt.Sprintf("%s:%d", list[0].Service.Address, list[0].Service.Port)
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {
 		fmt.Println("没连上微服务")
 		return

@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/consul/api v1.8.1
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

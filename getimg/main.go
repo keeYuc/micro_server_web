@@ -6,56 +6,41 @@ import (
 	"keeyu/message"
 	"net"
 
+	"github.com/hashicorp/consul/api"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":8787")
+	lis, err := net.Listen("tcp", ":18787")
 	if err != nil {
+		fmt.Println("listen:", err)
 		return
 	}
+	//consul
+	client, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		fmt.Println("consul client:", err)
+		return
+	}
+	asr := api.AgentServiceRegistration{
+		ID:      "getimg_",
+		Tags:    []string{"getimg_"},
+		Name:    "getimg_",
+		Address: "127.0.0.1",
+		Port:    18787,
+		// Check: &api.AgentServiceCheck{
+		// 	CheckID:  "getimg service test",
+		// 	TCP:      "localhost:18787",
+		// 	Timeout:  "5s",
+		// 	Interval: "1s",
+		// },
+	}
+	client.Agent().ServiceRegister(&asr)
+
+	//consul
 	defer lis.Close()
 	srv := grpc.NewServer()
 	message.RegisterGetimgServer(srv, new(handler.Getimg))
 	fmt.Println("getimg 服务启动成功")
 	srv.Serve(lis)
 }
-
-// // func main() {
-// 	//consul
-// 	// config := stdconsul.DefaultConfig()
-// 	// client, err := stdconsul.NewClient(config)
-// 	// if err != nil {
-// 	// 	return
-// 	// }
-// 	// reg := stdconsul.AgentServiceRegistration{
-// 	// 	ID:      "getimg",
-// 	// 	Tags:    []string{"getimg"},
-// 	// 	Name:    "getimg",
-// 	// 	Address: "127.0.0.1",
-// 	// 	Port:    11221,
-// 	// 	Check: &stdconsul.AgentServiceCheck{
-// 	// 		CheckID:  "getimg test",
-// 	// 		TCP:      "127.0.0.1:11221",
-// 	// 		Timeout:  "1s",
-// 	// 		Interval: "5s",
-// 	// 	},
-// 	// }
-// 	// client.Agent().ServiceRegister(&reg)
-
-// 	// Create service
-// 	srv := service.New(
-// 		service.Name("getimg"),
-// 		service.Version("latest"),
-// 		service.Address(":11221"),
-// 	)
-
-// 	// Register handler
-// 	pb.RegisterGetimgHandler(srv.Server(), new(handler.Getimg))
-
-// 	// Run service
-// 	if err := srv.Run(); err != nil {
-// 		fmt.Println(err)
-// 		// logger.Fatal(err)
-// 	}
-// }

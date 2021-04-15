@@ -17,11 +17,11 @@ var (
 
 const (
 	//mysql 配置
-	MysqlName = "root"
+	MysqlName = "keeyu"
 	MysqlPwd  = "Fucker123"
 	MysqlAddr = "127.0.0.1"
 	MysqlPort = "3306"
-	MysqlDB   = "IhomeData"
+	MysqlDB   = "ihome"
 	//redis 配置
 	RedisAddr = "127.0.0.1:6379"
 )
@@ -56,8 +56,7 @@ func init_mysql() error {
 		fmt.Println("链接数据库失败", err)
 		return err
 	}
-	_db.Create(&User{ID: 1,
-		Name: "test"})
+	_db.AutoMigrate(new(User))
 	//连接池
 	db, err := _db.DB()
 	if err != nil {

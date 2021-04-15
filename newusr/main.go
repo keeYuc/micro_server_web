@@ -10,12 +10,19 @@ import (
 	"google.golang.org/grpc"
 )
 
+const (
+	PORT = 18788
+	IP   = "127.0.0.1"
+	NAME = "newusr_"
+)
+
 func main() {
-	lis, err := net.Listen("tcp", ":18788")
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", IP, PORT))
 	if err != nil {
 		fmt.Println("listen:", err)
 		return
 	}
+	defer lis.Close()
 	// consul
 	client, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
@@ -23,11 +30,11 @@ func main() {
 		return
 	}
 	asr := api.AgentServiceRegistration{
-		ID:      "newusr_",
-		Tags:    []string{"newusr_"},
-		Name:    "newusr_",
-		Address: "127.0.0.1",
-		Port:    18788,
+		// ID:      NAME,
+		Tags:    []string{NAME},
+		Name:    NAME,
+		Address: IP,
+		Port:    PORT,
 		// Check: &api.AgentServiceCheck{
 		//      CheckID:  "getimg service test",
 		//      TCP:      "localhost:18787",
@@ -37,7 +44,6 @@ func main() {
 	}
 	client.Agent().ServiceRegister(&asr)
 
-	defer lis.Close()
 	srv := grpc.NewServer()
 	message.RegisterNewUsrServer(srv, new(handler.NewUsr))
 	fmt.Println("newusr 服务启动成功")

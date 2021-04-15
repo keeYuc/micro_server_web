@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package message;
+
+option go_package = "/;message";
+
+service Getimg {
+	rpc Call(Message) returns (Message) {}
+	rpc Test(M_test) returns(M_test){}
+}
+
+service NewUsr{
+	rpc Call(Usr) returns (Usr){}
+}
+
+message Usr{
+	string Mobile   = 1;
+	string PassWord = 2;
+	string SmsCode  = 3;
+	bool     status = 4; //传出参数
+}
+
+message Message{
+	string uuid = 1; //传入
+	bytes  data = 2; //传出
+}
+
+message M_test{
+	string test = 1;
+}

@@ -10,7 +10,7 @@ service Getimg {
 }
 
 service NewUsr{
-	rpc NewUsr(Usr) returns (Usr){}
+	rpc Call(Usr) returns (Usr){}
 }
 
 message Usr{

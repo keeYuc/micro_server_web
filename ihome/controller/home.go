@@ -64,7 +64,7 @@ func PostUser(ctx *gin.Context) {
 		fmt.Println("获取失败", err)
 		return
 	}
-	// ctx.JSON(http.StatusOK)
+	ctx.JSON(http.StatusOK, utils.GetStatusCode(utils.RECODE_OK))
 }
 
 func GetImg(ctx *gin.Context) {

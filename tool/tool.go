@@ -57,6 +57,7 @@ func init_mysql() error {
 		return err
 	}
 	_db.AutoMigrate(new(User))
+	GlobalMysql = _db
 	//连接池
 	db, err := _db.DB()
 	if err != nil {
@@ -68,7 +69,6 @@ func init_mysql() error {
 	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(70)
 	db.SetConnMaxLifetime(60 * 30)
-	GlobalMysql = _db
 	return nil
 	// db.LogMode(true)
 	// //默认情况下表名是复数

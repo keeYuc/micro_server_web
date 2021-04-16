@@ -40,11 +40,13 @@ func get_grpc_addr_by_name(name string) (string, error) {
 func PostUser(ctx *gin.Context) {
 	var reg RegUsr
 	err := ctx.Bind(&reg)
-	//校验数据
 	if err != nil {
 		fmt.Println("获取前段传递数据失败")
 		return
 	}
+	//校验验证码数据
+	//
+	//
 	addr, err := get_grpc_addr_by_name("newusr_")
 	if err != nil {
 		fmt.Println(err)
@@ -65,6 +67,22 @@ func PostUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, utils.GetStatusCode(utils.RECODE_OK))
+}
+
+func GetSmscd(ctx *gin.Context) {
+	//获取数据
+	mobile := ctx.Param("mobile")
+	//获取输入的图片验证码
+	text := ctx.Query("text")
+	//获取验证码图片的uuid
+	uuid := ctx.Query("id")
+
+	//校验数据
+	if mobile == "" || text == "" || uuid == "" {
+		fmt.Println("传入数据不完整")
+		return
+	}
+	//首先验证图片验证码是否正确 正确打开短信接口把 验证码存入redis内//
 }
 
 func GetImg(ctx *gin.Context) {

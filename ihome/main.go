@@ -54,6 +54,8 @@ func main() {
 	{
 		r1.GET("/session", controller.GetSession)
 		r1.GET("/imagecode/:uuid", controller.GetImg)
+		r1.GET("/smscode/:mobile",controller.GetSmscd)
+
 		r1.POST("/users",controller.PostUser)
 	}
 	router.Run(":12345")

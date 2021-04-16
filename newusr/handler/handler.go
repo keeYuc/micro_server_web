@@ -13,6 +13,7 @@ type NewUsr struct {
 }
 
 func (s *NewUsr) Call(ctx context.Context, in *message.Usr) (*message.Usr, error) {
+	fmt.Println("注册函数来了一个连接")
 	phone, pwd, smscode := in.Mobile, in.PassWord, in.SmsCode
 	if phone == "" || pwd == "" || smscode == "" {
 		return in, fmt.Errorf("Usr信息不能有空的")

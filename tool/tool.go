@@ -13,6 +13,7 @@ var (
 	GlobalRedis redis.Pool
 	GlobalMysql *gorm.DB
 	redis_init  bool
+	mysql_init  bool
 )
 
 const (
@@ -50,6 +51,9 @@ func init_redis() {
 func init_mysql() error {
 	//打开数据库
 	//拼接链接字符串
+	if mysql_init {
+		return nil
+	}
 	connString := MysqlName + ":" + MysqlPwd + "@tcp(" + MysqlAddr + ":" + MysqlPort + ")/" + MysqlDB + "?charset=utf8mb4&parseTime=True&loc=Local"
 	_db, err := gorm.Open(mysql.Open(connString), &gorm.Config{})
 	if err != nil {
@@ -78,19 +82,20 @@ func init_mysql() error {
 }
 
 type User struct {
-	ID            int           //用户编号
+	ID            int           `gorm:"primary_key"`     //用户编号
 	Name          string        `gorm:"size:32;unique"`  //用户名
 	Password_hash string        `gorm:"size:128" `       //用户密码加密的  hash
 	Mobile        string        `gorm:"size:11;unique" ` //手机号
 	Real_name     string        `gorm:"size:32" `        //真实姓名  实名认证
 	Id_card       string        `gorm:"size:20" `        //身份证号  实名认证
 	Avatar_url    string        `gorm:"size:256" `       //用户头像路径       通过fastdfs进行图片存储
-	Houses        []*House      //用户发布的房屋信息  一个人多套房
-	Orders        []*OrderHouse //用户下的订单       一个人多次订单
+	Houses        []*House      `gorm:"foreignkey:ID"`//用户发布的房屋信息  一个人多套房
+	// Orders        []*OrderHouse //用户下的订单       一个人多次订单
 }
 
 /* 房屋信息 table_name = house */
 type House struct {
+	ID              int           //`gorm:"foreignkey:ID"` //用户编号
 	gorm.Model                    //房屋编号
 	UserId          uint          //房屋主人的用户编号  与用户进行关联
 	AreaId          uint          //归属地的区域编号   和地区表进行关联
@@ -107,9 +112,9 @@ type House struct {
 	Max_days        int           `gorm:"default:0" json:"max_days"`                    //最多入住的天数 0表示不限制
 	Order_count     int           `gorm:"default:0" json:"order_count"`                 //预定完成的该房屋的订单数
 	Index_image_url string        `gorm:"size:256;default:''" json:"index_image_url"`   //房屋主图片路径
-	Facilities      []*Facility   `gorm:"many2many:house_facilities" json:"facilities"` //房屋设施   与设施表进行关联
-	Images          []*HouseImage `json:"img_urls"`                                     //房屋的图片   除主要图片之外的其他图片地址
-	Orders          []*OrderHouse `json:"orders"`                                       //房屋的订单    与房屋表进行管理
+	// Facilities      []*Facility   `gorm:"many2many:house_facilities" json:"facilities"` //房屋设施   与设施表进行关联
+	// Images          []*HouseImage `json:"img_urls"`                                     //房屋的图片   除主要图片之外的其他图片地址
+	// Orders          []*OrderHouse `json:"orders"`                                       //房屋的订单    与房屋表进行管理
 }
 
 /* 区域信息 table_name = area */ //区域信息是需要我们手动添加到数据库中的
@@ -135,6 +140,7 @@ type HouseImage struct {
 
 /* 订单 table_name = order */
 type OrderHouse struct {
+	ID          int       `gorm:"primary_key"` //用户编号
 	gorm.Model            //订单编号
 	UserId      uint      `json:"user_id"`       //下单的用户编号   //与用户表进行关联
 	HouseId     uint      `json:"house_id"`      //预定的房间编号   //与房屋信息进行关联

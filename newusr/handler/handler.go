@@ -23,5 +23,6 @@ func (s *NewUsr) Call(ctx context.Context, in *message.Usr) (*message.Usr, error
 		Mobile:        phone,
 		Password_hash: fmt.Sprintf("%x", string(sha_by[:])),
 	})
+	in.Status = true
 	return in, nil
 }
